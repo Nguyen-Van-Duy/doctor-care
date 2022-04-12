@@ -1,0 +1,10 @@
+const path = require('path');
+module.exports = {
+    //làm sao kn vs database
+  'config': path.resolve('./src/config', 'config.json'),
+  //tạo các bảng trong database 
+  'migrations-path': path.resolve('./src', 'migrations'),
+  'models-path': path.resolve('./src', 'models'),
+  //tạo dữ liều fake
+  'seeders-path': path.resolve('./src', 'seeders')
+}
