@@ -1,6 +1,9 @@
 import db from '../models/index'
 import hash from 'object-hash'
 import jwt from 'jsonwebtoken'
+import nodemailer from 'nodemailer'
+
+require("dotenv").config()
 
 
 let getHomePage = async (req, res) => {
@@ -85,9 +88,49 @@ let loginAccount = async (req, res) => {
     }
 }
 
+let sendSimpleEmail = async (req, res) => {
+
+    const email = req.body.email
+    if(!email) return res.sendStatus(401)
+
+    try {
+        // create reusable transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+            user: process.env.EMAIL_APP, // generated ethereal user
+            pass: process.env.EMAIL_APP_PASSWORD, // generated ethereal password
+            },
+        });
+
+        // send mail with defined transport object
+        let info = await transporter.sendMail({
+            from: '"Duy 👻" <duy124678@gmail.com>', // sender address
+            to: email, // list of receivers
+            subject: "Xác nhận đặt hàng ✔", // Subject line
+            html: `<h3>Xin chào ${email}!</h3>
+            <p>Bạn nhận được email này vì bạn đã đặt hàng online trên shopee.<p>
+            <p>Thông tin đơn hàng:<p>
+            <div><b>Thời gian: ${new Date()}</b></div>
+            <div><b>Sản phẩm: 1111111</b></div>
+
+            <p>Nếu thông tin trên là đúng sự thật, vui lòng click vào đường link bên đưới để xác nhận và hoàn tất thử tục đặt hàng</p>
+            <div><a href='https://www.youtube.com/' target="_blank">Click here</a></div>
+            <div>Xin chân thành cảm ơn!</div>
+            `
+        });
+        res.json({info: info})
+    } catch (error) {
+        return res.status(400).json({ error: err.message });
+    }
+}
+
 module.exports = {
     getHomePage: getHomePage,
     postHomePage: postHomePage,
     createAccount: createAccount,
-    loginAccount: loginAccount
+    loginAccount: loginAccount,
+    sendSimpleEmail: sendSimpleEmail
 }

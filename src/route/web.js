@@ -14,6 +14,7 @@ let initWebRoutes = (app) => {
     router.get('/getdata', verifyToken, (req, res) => {
         res.json({data: req.dataAll})
     })
+    router.post('/sendemail', homeController.sendSimpleEmail)
     return app.use('/', router)
 }
 
